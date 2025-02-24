@@ -1,7 +1,20 @@
+"use client";
+import { getUserInfo, removeUser } from "@/services/auth.services";
+import { decodedToken } from "@/utils/jwt";
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const router = useRouter();
+  const authToken = getUserInfo();
+  const userData = authToken ? decodedToken(authToken) : null;
+
+  const handleLogout = () => {
+    removeUser();
+    router.refresh();
+  };
+
   return (
     <Container>
       <Stack
@@ -35,9 +48,15 @@ const Navbar = () => {
             NGOs
           </Typography>
         </Stack>
-        <Button component={Link} href="/login">
-          Login
-        </Button>
+        {userData?.userId ? (
+          <Button variant="outlined" onClick={handleLogout}>
+            Logout
+          </Button>
+        ) : (
+          <Button component={Link} href="/login">
+            Login
+          </Button>
+        )}
       </Stack>
     </Container>
   );

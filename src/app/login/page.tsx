@@ -1,4 +1,7 @@
+"use client";
 import assets from "@/assets";
+import { userLogin } from "@/services/actions/userLogin";
+import { storeUserInfo } from "@/services/auth.services";
 import {
   Box,
   Button,
@@ -10,8 +13,34 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+export type TLoginData = {
+  email: string;
+  password: string;
+};
 
 const LoginPage = () => {
+  const { register, handleSubmit } = useForm<TLoginData>();
+  const router = useRouter();
+
+  const onSubmit: SubmitHandler<TLoginData> = async (values) => {
+    try {
+      const res = await userLogin(values);
+      console.log(res);
+      if (res?.data) {
+        storeUserInfo({ accessToken: res?.data?.accessToken });
+        toast.success(res.message);
+        router.push("/");
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Container>
       <Stack
@@ -51,7 +80,7 @@ const LoginPage = () => {
             </Box>
           </Stack>
           <Box>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <Grid2 container spacing={2} my={1}>
                 <Grid2 size={{ xs: 6 }}>
                   <TextField
@@ -60,6 +89,7 @@ const LoginPage = () => {
                     size="small"
                     type="email"
                     fullWidth={true}
+                    {...register("email")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
@@ -69,10 +99,17 @@ const LoginPage = () => {
                     variant="outlined"
                     size="small"
                     fullWidth={true}
+                    {...register("password")}
                   />
                 </Grid2>
               </Grid2>
-              <Typography mb={1} textAlign='end' component="p" variant="h6" fontWeight={100}>
+              <Typography
+                mb={1}
+                textAlign="end"
+                component="p"
+                variant="h6"
+                fontWeight={100}
+              >
                 <Link href="/forgot-password" color="primary">
                   Forgot Password?
                 </Link>
@@ -82,6 +119,7 @@ const LoginPage = () => {
                 sx={{
                   margin: "10px 0px",
                 }}
+                type="submit"
               >
                 Login
               </Button>
