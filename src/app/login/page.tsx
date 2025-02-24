@@ -1,5 +1,7 @@
 "use client";
 import assets from "@/assets";
+import PHForm from "@/components/forms/PHForm";
+import PHInput from "@/components/forms/PHInput";
 import { userLogin } from "@/services/actions/userLogin";
 import { storeUserInfo } from "@/services/auth.services";
 import {
@@ -8,25 +10,18 @@ import {
   Container,
   Grid2,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 
-export type TLoginData = {
-  email: string;
-  password: string;
-};
-
 const LoginPage = () => {
-  const { register, handleSubmit } = useForm<TLoginData>();
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<TLoginData> = async (values) => {
+  const handleLogin = async (values: FieldValues) => {
     try {
       const res = await userLogin(values);
       if (res?.data) {
@@ -79,26 +74,24 @@ const LoginPage = () => {
             </Box>
           </Stack>
           <Box>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <PHForm onSubmit={handleLogin}>
               <Grid2 container spacing={2} my={1}>
                 <Grid2 size={{ xs: 6 }}>
-                  <TextField
+                  <PHInput
+                    required={true}
+                    name="email"
                     label="Email"
-                    variant="outlined"
-                    size="small"
                     type="email"
                     fullWidth={true}
-                    {...register("email")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
-                  <TextField
+                  <PHInput
+                    required={true}
+                    name="password"
                     label="Password"
                     type="password"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("password")}
                   />
                 </Grid2>
               </Grid2>
@@ -129,7 +122,7 @@ const LoginPage = () => {
                   Register
                 </Link>
               </Typography>
-            </form>
+            </PHForm>
           </Box>
         </Box>
       </Stack>

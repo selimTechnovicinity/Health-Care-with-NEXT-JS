@@ -1,5 +1,7 @@
 "use client";
 import assets from "@/assets";
+import PHForm from "@/components/forms/PHForm";
+import PHInput from "@/components/forms/PHInput";
 import { registerPatient } from "@/services/actions/registerPatient";
 import { userLogin } from "@/services/actions/userLogin";
 import { storeUserInfo } from "@/services/auth.services";
@@ -10,38 +12,18 @@ import {
   Container,
   Grid2,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 
-interface IPatientData {
-  name: string;
-  email: string;
-  contactNumber: string;
-  address: string;
-}
-
-interface IPatientRegisterFormData {
-  password: string;
-  patient: IPatientData;
-}
-
 const Register = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<IPatientRegisterFormData>();
-
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<IPatientRegisterFormData> = async (values) => {
+  const handleRegister = async (values: FieldValues) => {
     const data = modifyPayload(values);
 
     try {
@@ -57,6 +39,8 @@ const Register = () => {
           storeUserInfo({ accessToken: result?.data?.accessToken });
           router.push("/");
         }
+      } else {
+        toast.error(res.message);
       }
     } catch (err) {
       console.log(err);
@@ -98,54 +82,49 @@ const Register = () => {
             </Box>
           </Stack>
           <Box>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <PHForm onSubmit={handleRegister}>
               <Grid2 container spacing={2} my={1}>
                 <Grid2 size={{ xs: 12 }}>
-                  <TextField
+                  <PHInput
+                    required={true}
+                    name="patient.name"
                     label="Name"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("patient.name")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
-                  <TextField
+                  <PHInput
+                    required={true}
+                    name="patient.email"
                     label="Email"
-                    variant="outlined"
-                    size="small"
                     type="email"
                     fullWidth={true}
-                    {...register("patient.email")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
-                  <TextField
+                  <PHInput
+                    required={true}
+                    name="password"
                     label="Password"
                     type="password"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("password")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
-                  <TextField
+                  <PHInput
+                    required={true}
+                    name="patient.contactNumber"
                     label="Contact Number"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("patient.contactNumber")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
-                  <TextField
+                  <PHInput
+                    required={true}
+                    name="patient.address"
                     label="Address"
                     type="text"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("patient.address")}
                   />
                 </Grid2>
               </Grid2>
@@ -165,7 +144,7 @@ const Register = () => {
                   Login
                 </Link>
               </Typography>
-            </form>
+            </PHForm>
           </Box>
         </Box>
       </Stack>
