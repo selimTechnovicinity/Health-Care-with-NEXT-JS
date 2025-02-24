@@ -4,6 +4,7 @@ import PHForm from "@/components/forms/PHForm";
 import PHInput from "@/components/forms/PHInput";
 import { userLogin } from "@/services/actions/userLogin";
 import { storeUserInfo } from "@/services/auth.services";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
   Button,
@@ -17,6 +18,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+
+export const LoginValidationSchema = z.object({
+  email: z.string().email("Please enter a valid email!"),
+  password: z.string().min(3, "Password must be at least 3 characters!"),
+});
 
 const LoginPage = () => {
   const router = useRouter();
@@ -74,11 +81,17 @@ const LoginPage = () => {
             </Box>
           </Stack>
           <Box>
-            <PHForm onSubmit={handleLogin}>
+            <PHForm
+              onSubmit={handleLogin}
+              resolver={zodResolver(LoginValidationSchema)}
+              defaultValues={{
+                email: "",
+                password: "",
+              }}
+            >
               <Grid2 container spacing={2} my={1}>
                 <Grid2 size={{ xs: 6 }}>
                   <PHInput
-                    required={true}
                     name="email"
                     label="Email"
                     type="email"
@@ -87,7 +100,6 @@ const LoginPage = () => {
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
                   <PHInput
-                    required={true}
                     name="password"
                     label="Password"
                     type="password"
