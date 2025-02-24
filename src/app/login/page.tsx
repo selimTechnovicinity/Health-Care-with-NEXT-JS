@@ -29,7 +29,6 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<TLoginData> = async (values) => {
     try {
       const res = await userLogin(values);
-      console.log(res);
       if (res?.data) {
         storeUserInfo({ accessToken: res?.data?.accessToken });
         toast.success(res.message);
