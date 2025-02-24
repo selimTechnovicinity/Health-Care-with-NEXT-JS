@@ -1,4 +1,7 @@
+"use client";
 import assets from "@/assets";
+import { registerPatient } from "@/services/actions/registerPatient";
+import { modifyPayload } from "@/utils/modifyPayload";
 import {
   Box,
   Button,
@@ -10,8 +13,47 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+interface IPatientData {
+  name: string;
+  email: string;
+  contactNumber: string;
+  address: string;
+}
+
+interface IPatientRegisterFormData {
+  password: string;
+  patient: IPatientData;
+}
 
 const Register = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<IPatientRegisterFormData>();
+
+  const router = useRouter();
+
+  const onSubmit: SubmitHandler<IPatientRegisterFormData> = async (values) => {
+    const data = modifyPayload(values);
+
+    try {
+      const res = await registerPatient(data);
+
+      if (res?.data) {
+        toast.success(res.message);
+        router.push("/login");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <Container>
       <Stack
@@ -47,7 +89,7 @@ const Register = () => {
             </Box>
           </Stack>
           <Box>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <Grid2 container spacing={2} my={1}>
                 <Grid2 size={{ xs: 12 }}>
                   <TextField
@@ -55,6 +97,7 @@ const Register = () => {
                     variant="outlined"
                     size="small"
                     fullWidth={true}
+                    {...register("patient.name")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
@@ -64,6 +107,7 @@ const Register = () => {
                     size="small"
                     type="email"
                     fullWidth={true}
+                    {...register("patient.email")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
@@ -73,6 +117,7 @@ const Register = () => {
                     variant="outlined"
                     size="small"
                     fullWidth={true}
+                    {...register("password")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
@@ -81,6 +126,7 @@ const Register = () => {
                     variant="outlined"
                     size="small"
                     fullWidth={true}
+                    {...register("patient.contactNumber")}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
@@ -90,6 +136,7 @@ const Register = () => {
                     variant="outlined"
                     size="small"
                     fullWidth={true}
+                    {...register("patient.address")}
                   />
                 </Grid2>
               </Grid2>
@@ -98,6 +145,7 @@ const Register = () => {
                 sx={{
                   margin: "10px 0px",
                 }}
+                type="submit"
               >
                 Register
               </Button>
