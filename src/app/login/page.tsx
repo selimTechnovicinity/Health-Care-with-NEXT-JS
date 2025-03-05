@@ -34,7 +34,7 @@ const LoginPage = () => {
       if (res?.data) {
         storeUserInfo({ accessToken: res?.data?.accessToken });
         toast.success(res.message);
-        router.push("/");
+        router.push("/dashboard");
       } else {
         toast.error(res.message);
       }

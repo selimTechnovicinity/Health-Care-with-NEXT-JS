@@ -1,14 +1,12 @@
 "use client";
 import { getUserInfo, removeUser } from "@/services/auth.services";
-import { decodedToken } from "@/utils/jwt";
 import { Button } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const AuthButton = () => {
   const router = useRouter();
-  const authToken = getUserInfo();
-  const userData = authToken ? decodedToken(authToken) : null;
+  const userData = getUserInfo();
 
   const handleLogout = () => {
     removeUser();

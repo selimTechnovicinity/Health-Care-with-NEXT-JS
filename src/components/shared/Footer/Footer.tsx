@@ -33,7 +33,12 @@ const Footer = () => {
           <Image src={xIcon} alt="x" width={30} />
           <Image src={linkedInIcon} alt="linkedIn" width={30} />
         </Stack>
-        <div className="border-b-[1px] border-dashed mb-5"></div>
+        {/* <div className="border-b-[1px] border-dashed mb-5"></div> */}
+        <Box
+          sx={{
+            border: "1px dashed lightgray",
+          }}
+        ></Box>
         <Stack
           direction="row"
           justifyContent="space-between"
